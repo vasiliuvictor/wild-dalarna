@@ -1,0 +1,43 @@
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-title">All Locations</div>
+    <div class="sidebar-count">{{ sidebarCount }}</div>
+  </div>
+  <div class="search-wrap">
+    <input
+      class="search-input"
+      type="text"
+      placeholder="Search places…"
+      [value]="places.searchTerm()"
+      (input)="onSearch($any($event.target).value)"
+    />
+  </div>
+  <div class="cat-list">
+    @for (entry of filteredGrouped | keyvalue: categoryOrder; track entry.key) {
+      @if (places.categories[entry.key]; as cat) {
+        <div class="cat-group">
+          <button
+            class="cat-toggle"
+            [class.open]="isCatOpen(entry.key)"
+            (click)="toggleCat(entry.key)"
+          >
+            <span class="cat-dot" [style.background]="cat.color"></span>
+            {{ cat.icon }} {{ cat.label }}
+            <span class="cat-count">{{ entry.value.length }}</span>
+            <span class="cat-chevron">▼</span>
+          </button>
+          <div class="place-list" [class.open]="isCatOpen(entry.key)">
+            @for (place of entry.value; track place.id) {
+              <div class="place-item" (click)="onPlaceClick(place)">
+                <span class="place-item-name">{{ place.name }}</span>
+                @if (place.rating) {
+                  <span class="place-item-rating">★{{ place.rating }}</span>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      }
+    }
+  </div>
+</aside>

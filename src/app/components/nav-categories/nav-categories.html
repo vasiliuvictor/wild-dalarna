@@ -1,0 +1,62 @@
+<section class="nav-cat">
+  <app-aurora-canvas></app-aurora-canvas>
+  <div class="nav-cat-overlay"></div>
+  <div class="nav-cat-inner">
+    <p class="nav-cat-eyebrow">Älvdalen · Dalarna · Sweden</p>
+    <h2 class="nav-cat-heading">Where would you like to explore?</h2>
+
+    <div class="nav-cat-cards">
+
+      <!-- News & Events -->
+      <button class="nav-cat-card nav-cat-card--gold" (click)="scrollTo('news-lists-section')">
+        <div class="nav-cat-tree nav-cat-tree--gold">
+          <svg viewBox="0 0 64 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="32" cy="5" r="3.5" fill="currentColor" opacity=".9"/>
+            <line x1="32" y1="8.5" x2="32" y2="11" stroke="currentColor" stroke-width="1.5"/>
+            <polygon points="32,10 17,32 47,32" fill="currentColor"/>
+            <polygon points="32,22 12,48 52,48" fill="currentColor"/>
+            <polygon points="32,36 6,66 58,66" fill="currentColor"/>
+            <rect x="27" y="66" width="10" height="10" rx="1" fill="currentColor"/>
+          </svg>
+        </div>
+        <span class="nav-cat-label">News &amp;<br>Upcoming Events</span>
+        <span class="nav-cat-sublabel">Latest</span>
+      </button>
+
+      <!-- Attractions & Locations -->
+      <button class="nav-cat-card nav-cat-card--green" (click)="scrollTo('app')">
+        <div class="nav-cat-tree nav-cat-tree--green">
+          <svg viewBox="0 0 64 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="32" cy="5" r="3.5" fill="currentColor" opacity=".9"/>
+            <line x1="32" y1="8.5" x2="32" y2="11" stroke="currentColor" stroke-width="1.5"/>
+            <polygon points="32,10 17,32 47,32" fill="currentColor"/>
+            <polygon points="32,22 12,48 52,48" fill="currentColor"/>
+            <polygon points="32,36 6,66 58,66" fill="currentColor"/>
+            <rect x="27" y="66" width="10" height="10" rx="1" fill="currentColor"/>
+          </svg>
+        </div>
+        <span class="nav-cat-label">Attractions &amp;<br>Locations</span>
+        <span class="nav-cat-sublabel">Explore</span>
+      </button>
+
+      <!-- Fishing & Lakes -->
+      <button class="nav-cat-card nav-cat-card--teal" (click)="scrollTo('lakes-section')">
+        <div class="nav-cat-tree nav-cat-tree--teal">
+          <svg viewBox="0 0 64 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="32" cy="5" r="3.5" fill="currentColor" opacity=".9"/>
+            <line x1="32" y1="8.5" x2="32" y2="11" stroke="currentColor" stroke-width="1.5"/>
+            <polygon points="32,10 17,32 47,32" fill="currentColor"/>
+            <polygon points="32,22 12,48 52,48" fill="currentColor"/>
+            <polygon points="32,36 6,66 58,66" fill="currentColor"/>
+            <rect x="27" y="66" width="10" height="10" rx="1" fill="currentColor"/>
+          </svg>
+        </div>
+        <span class="nav-cat-label">Fishing &amp;<br>Lakes</span>
+        <span class="nav-cat-sublabel">Waters &amp; Nature</span>
+      </button>
+
+    </div>
+
+  </div>
+  <hr class="nav-cat-divider">
+</section>

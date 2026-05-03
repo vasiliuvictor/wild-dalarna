@@ -1,0 +1,22 @@
+<app-hero (scrollToApp)="scrollToApp()"></app-hero>
+
+<app-nav-categories></app-nav-categories>
+
+<app-news-events></app-news-events>
+
+<div id="app">
+  <app-topbar></app-topbar>
+  <div class="main-layout">
+    <app-sidebar (selectPlace)="onSelectPlace($event)"></app-sidebar>
+    <app-map-canvas (openModal)="onOpenModal($event)"></app-map-canvas>
+  </div>
+</div>
+
+<app-place-modal
+  [place]="selectedPlace()"
+  (close)="onCloseModal()"
+></app-place-modal>
+
+<app-news-lists></app-news-lists>
+
+<app-lakes-map-canvas></app-lakes-map-canvas>

@@ -1,0 +1,96 @@
+<section class="lakes-section" id="lakes-section">
+  <div class="lakes-section-nav">
+    <div class="lakes-section-nav-title">
+      <span class="lakes-section-nav-dot"></span>
+      Lake Fishing Guide
+    </div>
+    <span class="lakes-section-nav-meta">Älvdalen · {{ lakes.totalLakes }} Waters</span>
+  </div>
+
+  <div class="lakes-map-area">
+    <canvas
+      #canvas
+      id="lakes-canvas"
+      (mousedown)="onMouseDown($event)"
+      (mousemove)="onCanvasMouseMove($event)"
+      (wheel)="onWheel($event)"
+      (mouseleave)="onMouseLeave()"
+      (touchstart)="onTouchStart($event)"
+      (touchmove)="onTouchMove($event)"
+      (touchend)="onTouchEnd($event)"
+    ></canvas>
+
+    <div
+      class="map-tooltip"
+      [class.visible]="tooltipVisible()"
+      [style.left.px]="tooltipLeft()"
+      [style.top.px]="tooltipTop()"
+      [innerHTML]="tooltipHtml()"
+    ></div>
+
+    <div class="map-controls">
+      <button class="zoom-btn" (click)="zoomIn()" title="Zoom in">+</button>
+      <div class="zoom-label">{{ zoomLabel() }}</div>
+      <button class="zoom-btn" (click)="zoomOut()" title="Zoom out">−</button>
+      <button class="zoom-btn" (click)="resetView()" title="Fit map" style="font-size:.7rem">⌂</button>
+    </div>
+
+    <div class="lakes-legend map-legend" [class.open]="legendOpen()">
+      <div class="legend-title" (click)="legendOpen.update(v => !v)">
+        Categories
+        <span class="legend-chevron">▲</span>
+      </div>
+      <div class="legend-items">
+        @for (entry of categoryEntries; track entry[0]) {
+          <div
+            class="legend-item"
+            [class.dimmed]="!lakes.isCategoryActive(entry[0])"
+            (click)="toggleCategory(entry[0])"
+          >
+            <div class="legend-dot" [style.background]="entry[1].color"></div>
+            <span>{{ entry[1].emoji }} {{ entry[1].label }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="hint" [class.hidden]="hintHidden()">🎣 Scroll to zoom · Drag to pan · Click a marker to explore</div>
+
+    @if (popupVisible() && popupCluster()) {
+      <div
+        class="cluster-popup"
+        [style.left.px]="popupLeft()"
+        [style.top.px]="popupTop()"
+      >
+        <div class="cpop-title">{{ popupCluster()!.items.length }} waters here</div>
+        @for (lake of popupCluster()!.items; track lake.id) {
+          <div class="cpop-item" (click)="openLakePopup(lake.id, $event)">
+            <div class="cpop-dot" [style.background]="lakes.categories[lake.category].color"></div>
+            <span class="cpop-name">{{ lake.name }}</span>
+            <span class="cpop-rating" style="color:#8aaa82;font-size:.68rem">{{ lakes.categories[lake.category].emoji }}</span>
+          </div>
+        }
+      </div>
+    }
+
+    @if (activeLake()) {
+      <div
+        class="lake-popup"
+        [style.left.px]="lakePopupLeft()"
+        [style.top.px]="lakePopupTop()"
+      >
+        <button class="lake-popup-close" (click)="closeLakePopup()">✕</button>
+        <div class="lake-popup-name">{{ activeLake()!.name }}</div>
+        <div class="lake-popup-species">🐟 {{ activeLake()!.species }}</div>
+        <p class="lake-popup-desc">{{ activeLake()!.description }}</p>
+        <div class="lake-popup-links">
+          @for (link of activeLake()!.links; track link.url) {
+            <a [href]="link.url" target="_blank" rel="noopener" (click)="$event.stopPropagation()">
+              {{ link.label }}
+            </a>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</section>

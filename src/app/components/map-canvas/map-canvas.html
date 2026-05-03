@@ -1,0 +1,58 @@
+<div class="map-area">
+  <canvas
+    #canvas
+    id="map-canvas"
+    (mousedown)="onMouseDown($event)"
+    (mousemove)="onCanvasMouseMove($event)"
+    (wheel)="onWheel($event)"
+    (mouseleave)="onMouseLeave()"
+    (touchstart)="onTouchStart($event)"
+    (touchmove)="onTouchMove($event)"
+    (touchend)="onTouchEnd($event)"
+  ></canvas>
+
+  <!-- Tooltip -->
+  <div
+    class="map-tooltip"
+    [class.visible]="tooltipVisible()"
+    [style.left.px]="tooltipLeft()"
+    [style.top.px]="tooltipTop()"
+    [innerHTML]="tooltipHtml()"
+  ></div>
+
+  <!-- Zoom controls -->
+  <div class="map-controls">
+    <button class="zoom-btn" (click)="zoomIn()" title="Zoom in">+</button>
+    <div class="zoom-label">{{ zoomLabel() }}</div>
+    <button class="zoom-btn" (click)="zoomOut()" title="Zoom out">−</button>
+    <button class="zoom-btn" (click)="resetView()" title="Fit map" style="font-size:.7rem">⌂</button>
+  </div>
+
+  <!-- Legend -->
+  <app-map-legend></app-map-legend>
+
+  <!-- Hint -->
+  <div class="hint" [class.hidden]="hintHidden()">🔍 Scroll to zoom · Drag to pan · Click clusters to expand</div>
+
+  <!-- Cluster popup -->
+  @if (popupVisible() && popupCluster()) {
+    <div
+      class="cluster-popup"
+      [style.left.px]="popupLeft()"
+      [style.top.px]="popupTop()"
+    >
+      <div class="cpop-title">{{ popupCluster()!.items.length }} places here</div>
+      @for (place of popupCluster()!.items; track place.id) {
+        @if (places.categories[place.category]; as cat) {
+          <div class="cpop-item" (click)="popupOpenModal(place.id)">
+            <div class="cpop-dot" [style.background]="cat.color"></div>
+            <span class="cpop-name">{{ place.name }}</span>
+            @if (place.rating) {
+              <span class="cpop-rating">★{{ place.rating }}</span>
+            }
+          </div>
+        }
+      }
+    </div>
+  }
+</div>

@@ -1,0 +1,128 @@
+:host { display: block; }
+
+.nav-cat {
+  background: #020c06;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-cat-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(2,12,6,.45) 0%, rgba(2,12,6,.65) 100%);
+  pointer-events: none;
+}
+
+.nav-cat-inner {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px;
+  text-align: center;
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.nav-cat-eyebrow {
+  font-size: .72rem;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: #6b9e7a;
+  margin-bottom: 1rem;
+  opacity: .8;
+}
+
+.nav-cat-heading {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  color: #e8dfc8;
+  font-weight: 400;
+  line-height: 1.2;
+  margin-bottom: 56px;
+}
+
+.nav-cat-cards {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.nav-cat-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 16px;
+  transition: transform .24s ease;
+
+  &:hover {
+    transform: translateY(-8px);
+
+    .nav-cat-tree { color: var(--hover-color); }
+    .nav-cat-label { color: #c9e8b8; }
+  }
+
+  &--gold  { --hover-color: #c4952a; }
+  &--green { --hover-color: #4a7c59; }
+  &--teal  { --hover-color: #3a7ca5; }
+}
+
+.nav-cat-tree {
+  width: 110px;
+  height: 138px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.18);
+  transition: color .28s ease;
+
+  svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 6px 16px rgba(0,0,0,.5));
+  }
+}
+
+.nav-cat-label {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.35;
+  transition: color .24s;
+}
+
+.nav-cat-sublabel {
+  font-size: .68rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.22);
+}
+
+.nav-cat-divider {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  border: none;
+  border-top: 1px solid rgba(255,255,255,.1);
+  margin: 0;
+}
+
+@media (max-width: 520px) {
+  .nav-cat-heading { margin-bottom: 40px; }
+  .nav-cat-tree { width: 72px; height: 90px; }
+  .nav-cat-label { font-size: .9rem; }
+  .nav-cat-card { gap: 14px; }
+}

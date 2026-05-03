@@ -1,0 +1,18 @@
+<div class="map-legend" [class.open]="isOpen()">
+  <div class="legend-title" (click)="toggle()">
+    Categories
+    <span class="legend-chevron">▲</span>
+  </div>
+  <div class="legend-items">
+    @for (entry of places.categories | keyvalue: keepOrder; track entry.key) {
+      <div
+        class="legend-item"
+        [class.dimmed]="isDimmed(entry.key)"
+        (click)="toggleCategory(entry.key)"
+      >
+        <div class="legend-dot" [style.background]="entry.value.color"></div>
+        <span>{{ entry.value.icon }} {{ entry.value.label }}</span>
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,77 @@
+<div class="modal-overlay" [class.open]="isOpen()" (click)="onOverlayClick($event)">
+  @if (place() && cat) {
+    <div class="modal">
+      <!-- Header -->
+      <div class="modal-header">
+        <button class="modal-close" (click)="doClose()">✕</button>
+        <div class="modal-badge" [style.background]="cat.color">{{ cat.icon }} {{ cat.label }}</div>
+        <h2 class="modal-name">{{ place()!.name }}</h2>
+        <div class="modal-meta">
+          @if (place()!.rating) {
+            <div class="modal-meta-item">
+              <span class="modal-stars">{{ stars(place()!.rating!) }}</span>
+              &nbsp;{{ place()!.rating }} ({{ (place()!.ratingCount ?? 0).toLocaleString() }} reviews)
+            </div>
+          }
+          @if (place()!.address) {
+            <div class="modal-meta-item">📍 {{ place()!.address }}</div>
+          }
+          @if (place()!.phone) {
+            <div class="modal-meta-item">
+              📞 <a [href]="'tel:' + place()!.phone" style="color:inherit">{{ place()!.phone }}</a>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body" #modalBody (scroll)="onBodyScroll()">
+        @if (place()!.description) {
+          <div class="modal-section">
+            <div class="modal-section-label">About</div>
+            <p>{{ place()!.description }}</p>
+          </div>
+        }
+        @if (place()!.tip) {
+          <div class="modal-section">
+            <div class="modal-section-label">💡 Local Tip</div>
+            <p style="color:#4a7c59;font-weight:500">{{ place()!.tip }}</p>
+          </div>
+        }
+        @if (place()!.hours?.length) {
+          <div class="modal-section">
+            <div class="modal-section-label">Opening Hours</div>
+            <div class="hours-grid">
+              @for (h of place()!.hours; track h) {
+                <div class="hours-row">{{ h }}</div>
+              }
+            </div>
+          </div>
+        }
+        @if (place()!.reviews?.length) {
+          <div class="modal-section">
+            <div class="modal-section-label">Visitor Reviews</div>
+            <div class="reviews-list">
+              @for (review of place()!.reviews; track review) {
+                <div class="review-card" [style.border-color]="cat.color">{{ review }}</div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        <div class="modal-scroll-hint" [class.visible]="scrollHintVisible()">
+          <span class="modal-scroll-chevron">⌄</span>
+        </div>
+        <div class="modal-actions">
+          <a [href]="mapsUrl" target="_blank" class="btn btn-primary">🗺 Open in Maps</a>
+          @if (place()!.phone) {
+            <a [href]="'tel:' + place()!.phone" class="btn btn-secondary">📞 Call</a>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>
