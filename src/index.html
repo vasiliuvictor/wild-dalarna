@@ -111,7 +111,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);
 /* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(4,10,4,.76);backdrop-filter:blur(6px);z-index:100;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .32s;padding:20px}
 .modal-overlay.open{opacity:1;pointer-events:all}
-.modal{background:var(--cream);border-radius:18px;max-width:540px;width:100%;max-height:85vh;overflow-y:auto;transform:scale(.93) translateY(18px);transition:transform .32s cubic-bezier(.34,1.56,.64,1);box-shadow:0 40px 90px rgba(0,0,0,.5)}
+.modal{background:var(--cream);border-radius:18px;max-width:540px;width:100%;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;transform:scale(.93) translateY(18px);transition:transform .32s cubic-bezier(.34,1.56,.64,1);box-shadow:0 40px 90px rgba(0,0,0,.5)}
 .modal-overlay.open .modal{transform:scale(1) translateY(0)}
 .modal-header{padding:28px 28px 0;position:relative}
 .modal-close{position:absolute;top:18px;right:18px;width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,.08);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--text-light);transition:background .18s,transform .18s}
@@ -121,7 +121,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);
 .modal-meta{display:flex;flex-wrap:wrap;gap:14px;margin-top:12px;padding-bottom:18px;border-bottom:1px solid rgba(0,0,0,.06)}
 .modal-meta-item{display:flex;align-items:center;gap:5px;font-size:.8rem;color:var(--text-light)}
 .modal-stars{color:var(--gold);letter-spacing:1px}
-.modal-body{padding:18px 28px 28px}
+.modal-body{padding:18px 28px 20px;flex:1;overflow-y:auto}
+.modal-footer{position:relative;padding:14px 28px 20px;border-top:1px solid rgba(0,0,0,.07);background:var(--cream);flex-shrink:0}
+.modal-scroll-hint{position:absolute;bottom:100%;left:0;right:0;height:56px;background:linear-gradient(to bottom,transparent,var(--mist));display:flex;align-items:flex-end;justify-content:center;padding-bottom:6px;pointer-events:none;z-index:2;opacity:0;transition:opacity .25s}
+.modal-scroll-hint.visible{opacity:1}
+.modal-scroll-chevron{font-size:1.1rem;color:var(--moss);opacity:.85;animation:scroll-bounce .9s ease-in-out infinite}
+@keyframes scroll-bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
 .modal-section{margin-bottom:20px}
 .modal-section-label{font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-light);margin-bottom:7px;font-weight:500}
 .modal-section p{font-size:.86rem;color:var(--text);line-height:1.7}
@@ -208,6 +213,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);
 .events-link{font-size:.76rem;color:#6b9e7a;text-decoration:none;padding:6px 12px;border:1px solid rgba(107,158,122,.3);border-radius:6px;transition:all .2s}
 .events-link:hover{background:rgba(74,124,89,.15);border-color:rgba(107,158,122,.6)}
 @media(max-width:768px){.news-col{padding:28px 16px}.parallax-banner{height:440px;padding:40px 0 36px}.news-lists-nav{padding:0 16px;gap:10px}.news-lists-nav-meta{display:none}}
+.news-col-mobile-label{display:none}
+@media(max-width:768px){.news-col-mobile-label{display:flex;align-items:center;gap:10px;padding-bottom:16px;margin-bottom:16px;border-bottom:1px solid rgba(255,255,255,.08)}.news-col-mobile-label-icon{font-size:1.3rem}.news-col-mobile-label-text{font-family:'Playfair Display',serif;font-size:1.05rem;color:#f0f4f1}}
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:3px}
 @media(max-width:768px){.main-layout{grid-template-columns:1fr;grid-template-rows:260px 1fr;height:calc(100vh - 60px)}.sidebar{max-height:260px;overflow-y:auto}.topbar-stats{display:none}}
@@ -376,6 +383,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);
 
     <!-- LEFT: News feed -->
     <div class="news-col">
+      <div class="news-col-mobile-label">
+        <span class="news-col-mobile-label-icon">📰</span>
+        <span class="news-col-mobile-label-text">Latest News</span>
+      </div>
       <div class="news-list" id="news-list">
 
         <a class="news-card" href="https://www.siljannews.se/alvdalen/storsatern-bjod-pa-lanets-nordligaste-valborgsbrasa/" target="_blank" rel="noopener">
@@ -431,6 +442,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);
 
     <!-- RIGHT: Upcoming events -->
     <div class="news-col">
+      <div class="news-col-mobile-label">
+        <span class="news-col-mobile-label-icon">📅</span>
+        <span class="news-col-mobile-label-text">Upcoming Events</span>
+      </div>
       <div class="events-list" id="events-list">
 
         <div class="event-card">
@@ -532,6 +547,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);
   <div class="modal">
     <div class="modal-header" id="modal-header"></div>
     <div class="modal-body"  id="modal-body"></div>
+    <div class="modal-footer" id="modal-footer"></div>
   </div>
 </div>
 
@@ -2047,8 +2063,21 @@ function openModal(id) {
   if(p.hours?.length) body+=`<div class="modal-section"><div class="modal-section-label">Opening Hours</div><div class="hours-grid">${p.hours.map(h=>`<div class="hours-row">${h}</div>`).join('')}</div></div>`;
   if(p.reviews?.length) body+=`<div class="modal-section"><div class="modal-section-label">Visitor Reviews</div><div class="reviews-list">${p.reviews.map(r=>`<div class="review-card" style="border-color:${cat.color}">${r}</div>`).join('')}</div></div>`;
   const url = MAPS_LINKS[p.id] || `https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lon}`;
-  body+=`<div class="modal-actions"><a href="${url}" target="_blank" class="btn btn-primary">🗺 Open in Maps</a>${p.phone?`<a href="tel:${p.phone}" class="btn btn-secondary">📞 Call</a>`:''}<button class="btn btn-secondary" onclick="closeModal()">✕ Close</button></div>`;
-  document.getElementById('modal-body').innerHTML = body;
+  const modalBody = document.getElementById('modal-body');
+  modalBody.scrollTop = 0;
+  modalBody.innerHTML = body;
+  document.getElementById('modal-footer').innerHTML =
+    `<div class="modal-scroll-hint" id="modal-scroll-hint"><span class="modal-scroll-chevron">⌄</span></div>`+
+    `<div class="modal-actions"><a href="${url}" target="_blank" class="btn btn-primary">🗺 Open in Maps</a>${p.phone?`<a href="tel:${p.phone}" class="btn btn-secondary">📞 Call</a>`:''}</div>`;
+  function checkModalScroll() {
+    const hint = document.getElementById('modal-scroll-hint');
+    if (!hint) return;
+    const scrollable = modalBody.scrollHeight > modalBody.clientHeight + 4;
+    const atBottom   = modalBody.scrollTop + modalBody.clientHeight >= modalBody.scrollHeight - 10;
+    hint.classList.toggle('visible', scrollable && !atBottom);
+  }
+  modalBody.onscroll = checkModalScroll;
+  requestAnimationFrame(checkModalScroll);
   document.getElementById('modal-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
