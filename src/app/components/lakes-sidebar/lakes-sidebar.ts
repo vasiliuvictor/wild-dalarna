@@ -1,4 +1,4 @@
-import { Component, inject, output, signal } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, output, signal } from '@angular/core';
 import { KeyValuePipe } from '@angular/common';
 import { LakesService } from '../../services/lakes.service';
 import { Lake } from '../../models/lake.model';
@@ -12,8 +12,19 @@ import { Lake } from '../../models/lake.model';
 export class LakesSidebar {
   protected lakes = inject(LakesService);
   readonly selectLake = output<Lake>();
+  private el = inject(ElementRef);
 
   protected openCats = signal(new Set<string>());
+  protected mobileCatOpen = signal(false);
+
+  toggleMobileCats(): void { this.mobileCatOpen.update(v => !v); }
+
+  @HostListener('document:click', ['$event'])
+  onDocClick(e: MouseEvent): void {
+    if (this.mobileCatOpen() && !this.el.nativeElement.contains(e.target as Node)) {
+      this.mobileCatOpen.set(false);
+    }
+  }
 
   get filteredGrouped(): Record<string, Lake[]> {
     const grouped: Record<string, Lake[]> = {};
@@ -47,6 +58,7 @@ export class LakesSidebar {
   }
 
   onLakeClick(lake: Lake): void {
+    this.mobileCatOpen.set(false);
     this.selectLake.emit(lake);
   }
 

@@ -1,4 +1,4 @@
-import { Component, inject, output, signal } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, output, signal } from '@angular/core';
 import { KeyValuePipe } from '@angular/common';
 import { PlacesService } from '../../services/places';
 import { Place } from '../../models/place.model';
@@ -12,8 +12,19 @@ import { Place } from '../../models/place.model';
 export class Sidebar {
   protected places = inject(PlacesService);
   readonly selectPlace = output<Place>();
+  private el = inject(ElementRef);
 
   protected openCats = signal(new Set<string>());
+  protected mobileCatOpen = signal(false);
+
+  toggleMobileCats(): void { this.mobileCatOpen.update(v => !v); }
+
+  @HostListener('document:click', ['$event'])
+  onDocClick(e: MouseEvent): void {
+    if (this.mobileCatOpen() && !this.el.nativeElement.contains(e.target as Node)) {
+      this.mobileCatOpen.set(false);
+    }
+  }
 
   get filteredGrouped(): Record<string, Place[]> {
     const grouped: Record<string, Place[]> = {};
@@ -47,6 +58,7 @@ export class Sidebar {
   }
 
   onPlaceClick(place: Place): void {
+    this.mobileCatOpen.set(false);
     this.selectPlace.emit(place);
   }
 

@@ -139,10 +139,13 @@ export class LakesMapEngineService {
     return best;
   }
 
-  flyToLake(lake: Lake): void {
+  flyToLake(lake: Lake, onDone?: () => void): void {
     const base = this.minScale();
     const ns = Math.min(this.minScale() * MAX_ZOOM, Math.max(this.scale, base * 2.5));
-    this.animateTo(this.canvas.width / 2 / ns - lake.px, this.canvas.height / 2 / ns - lake.py, ns, () => this.draw());
+    this.animateTo(this.canvas.width / 2 / ns - lake.px, this.canvas.height / 2 / ns - lake.py, ns, () => {
+      this.draw();
+      onDone?.();
+    });
   }
 
   imgToCvs(px: number, py: number): { cx: number; cy: number } {

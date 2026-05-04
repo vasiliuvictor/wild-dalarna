@@ -1,6 +1,6 @@
 import {
   AfterViewInit, Component, effect, ElementRef,
-  inject, NgZone, OnDestroy, signal, ViewChild,
+  HostListener, inject, NgZone, OnDestroy, signal, ViewChild,
 } from '@angular/core';
 import { LakeCluster } from '../../models/lake.model';
 import { LAKE_CATEGORIES, LakesService } from '../../services/lakes.service';
@@ -18,6 +18,7 @@ export class LakesMapCanvas implements AfterViewInit, OnDestroy {
   protected lakes = inject(LakesService);
   private engine = inject(LakesMapEngineService);
   private ngZone = inject(NgZone);
+  private hostEl = inject(ElementRef);
 
   readonly categoryEntries = Object.entries(LAKE_CATEGORIES);
 
@@ -118,7 +119,12 @@ export class LakesMapCanvas implements AfterViewInit, OnDestroy {
 
   flyToLake(lakeId: string): void {
     const lake = this.lakes.getLakeById(lakeId);
-    if (lake) this.engine.flyToLake(lake);
+    if (!lake) return;
+    this.engine.flyToLake(lake, () => {
+      const { cx, cy } = this.engine.imgToCvs(lake.px, lake.py);
+      this.hideClusterPopup();
+      this.showLakePopup(lake.id, cx, cy);
+    });
   }
 
   onMouseDown(e: MouseEvent): void {
@@ -241,6 +247,15 @@ export class LakesMapCanvas implements AfterViewInit, OnDestroy {
       this.lakePopupLeft.set(left);
       this.lakePopupTop.set(top);
     });
+  }
+
+  @HostListener('document:pointerdown', ['$event'])
+  onDocPointerDown(e: PointerEvent): void {
+    if (!this.activeLake()) return;
+    const popup = this.hostEl.nativeElement.querySelector('.lake-popup');
+    if (popup && !popup.contains(e.target as Node)) {
+      this.closeLakePopup();
+    }
   }
 
   protected closeLakePopup(): void { this.activeLake.set(undefined); }

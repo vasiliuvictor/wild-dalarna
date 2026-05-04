@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Cluster, Place } from '../models/place.model';
-import { CATEGORIES, IMG_H, IMG_W, PlacesService } from './places';
+import { CATEGORIES, PlacesService } from './places';
 
 const CLUSTER_R = 30;
-const MAX_SCALE = 8;
-const FOCUS_PX = 739.9;
-const FOCUS_PY = 674.3;
+const MAX_ZOOM = 3;
 const HIT_RADIUS = 22;
+
+export const IMG_W = 960;
+export const IMG_H = 1113;
 
 @Injectable({ providedIn: 'root' })
 export class MapEngineService {
@@ -40,7 +41,7 @@ export class MapEngineService {
       this.imgLoaded = true;
       this.resize();
     };
-    this.mapImg.src = 'alvdalen_map.png';
+    this.mapImg.src = 'alvdalen_map_v2.png';
   }
 
   resize(): void {
@@ -52,16 +53,9 @@ export class MapEngineService {
 
   fitView(): void {
     const W = this.canvas.width, H = this.canvas.height;
-    const coverS = Math.max(W / IMG_W, H / IMG_H);
-    const containS = Math.min(W / IMG_W, H / IMG_H);
-    this.scale = coverS;
-    if (containS >= coverS * 0.90) {
-      this.ox = this.clampOx((W / this.scale - IMG_W) / 2);
-      this.oy = this.clampOy((H / this.scale - IMG_H) / 2);
-    } else {
-      this.ox = this.clampOx((W * 0.72) / this.scale - FOCUS_PX);
-      this.oy = this.clampOy((H * 0.78) / this.scale - FOCUS_PY);
-    }
+    this.scale = Math.max(W / IMG_W , H / IMG_H);
+    this.ox = this.clampOx(W / (2 * this.scale) - IMG_W / 2);
+    this.oy = this.clampOy(H / (2 * this.scale) - IMG_H / 2);
     this.draw();
   }
 
@@ -84,7 +78,7 @@ export class MapEngineService {
   zoom(factor: number, pivotCx?: number, pivotCy?: number): void {
     const W = this.canvas.width, H = this.canvas.height;
     if (pivotCx == null) { pivotCx = W / 2; pivotCy = H / 2; }
-    const ns = Math.max(this.minScale(), Math.min(MAX_SCALE, this.scale * factor));
+    const ns = Math.max(this.minScale(), Math.min(this.minScale() * MAX_ZOOM, this.scale * factor));
     if (ns === this.scale) return;
     const imgPt = this.cvsToImg(pivotCx, pivotCy!);
     this.scale = ns;
@@ -129,7 +123,7 @@ export class MapEngineService {
       const lat = cluster.items.reduce((s, p) => s + p.lat, 0) / cluster.items.length;
       const lon = cluster.items.reduce((s, p) => s + p.lon, 0) / cluster.items.length;
       const { px, py } = this.places.geoToImg(lat, lon);
-      const ns = Math.min(MAX_SCALE, this.scale * 2.8);
+      const ns = Math.min(this.minScale() * MAX_ZOOM, this.scale * 2.8);
       this.animateTo(this.canvas.width / 2 / ns - px, this.canvas.height / 2 / ns - py, ns,
         () => { this.draw(); this.onClusterClick?.(cluster, cx, cy); });
     } else {
@@ -166,11 +160,15 @@ export class MapEngineService {
   }
 
   private clampOx(v: number): number {
-    return Math.min(0, Math.max(this.canvas.width / this.scale - IMG_W, v));
+    const excess = this.canvas.width / this.scale - IMG_W;
+    if (excess >= 0) return excess / 2;
+    return Math.min(0, Math.max(excess, v));
   }
 
   private clampOy(v: number): number {
-    return Math.min(0, Math.max(this.canvas.height / this.scale - IMG_H, v));
+    const excess = this.canvas.height / this.scale - IMG_H ;
+    if (excess >= 0) return excess / 2;
+    return Math.min(0, Math.max(excess, v));
   }
 
   private buildClusters(filtered: Place[]): Cluster[] {

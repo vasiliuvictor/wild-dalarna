@@ -3,6 +3,7 @@
     <div class="sidebar-title">All Locations</div>
     <div class="sidebar-count">{{ sidebarCount }}</div>
   </div>
+
   <div class="search-wrap">
     <input
       class="search-input"
@@ -12,7 +13,14 @@
       (input)="onSearch($any($event.target).value)"
     />
   </div>
-  <div class="cat-list">
+
+  <button class="sidebar-mobile-cat-btn" (click)="toggleMobileCats()">
+    <span>Locations</span>
+    <span class="sidebar-mobile-cat-count">{{ places.filteredPlaces().length }}</span>
+    <span class="sidebar-mobile-cat-chevron" [class.open]="mobileCatOpen()">▼</span>
+  </button>
+
+  <div class="cat-list" [class.mobile-collapsed]="!mobileCatOpen()">
     @for (entry of filteredGrouped | keyvalue: categoryOrder; track entry.key) {
       @if (places.categories[entry.key]; as cat) {
         <div class="cat-group">

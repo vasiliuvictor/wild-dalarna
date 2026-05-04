@@ -14,7 +14,13 @@
     />
   </div>
 
-  <div class="lsb-cat-list">
+  <button class="lsb-mobile-cat-btn" (click)="toggleMobileCats()">
+    <span>Waters</span>
+    <span class="lsb-mobile-cat-count">{{ lakes.filteredLakes().length }}</span>
+    <span class="lsb-mobile-cat-chevron" [class.open]="mobileCatOpen()">▼</span>
+  </button>
+
+  <div class="lsb-cat-list" [class.mobile-collapsed]="!mobileCatOpen()">
     @for (entry of filteredGrouped | keyvalue: categoryOrder; track entry.key) {
       @if (lakes.categories[entry.key]; as cat) {
         <div class="lsb-cat-group">
