@@ -41,7 +41,7 @@ export class LakesMapEngineService {
       this.imgLoaded = true;
       this.resize();
     };
-    this.mapImg.src = 'alvdalen_lakes.png';
+    this.mapImg.src = 'alvdalen_lakes_v2.png';
   }
 
   resize(): void {
@@ -53,9 +53,9 @@ export class LakesMapEngineService {
 
   fitView(): void {
     const W = this.canvas.width, H = this.canvas.height;
-    this.scale = Math.min(W / LAKES_IMG_W, H / LAKES_IMG_H);
-    this.ox = this.clampOx(0);
-    this.oy = this.clampOy(0);
+    this.scale = Math.max(W / LAKES_IMG_W, H / LAKES_IMG_H);
+    this.ox = this.clampOx(W / (2 * this.scale) - LAKES_IMG_W / 2);
+    this.oy = this.clampOy(H / (2 * this.scale) - LAKES_IMG_H / 2);
     this.draw();
   }
 
@@ -118,7 +118,7 @@ export class LakesMapEngineService {
       this.onLakeClick?.(cluster.items[0].id, cluster.cx, cluster.cy);
       return;
     }
-    const base = Math.min(this.canvas.width / LAKES_IMG_W, this.canvas.height / LAKES_IMG_H);
+    const base = this.minScale();
     if (this.scale / base < 2.5) {
       const avgPx = cluster.items.reduce((s, l) => s + l.px, 0) / cluster.items.length;
       const avgPy = cluster.items.reduce((s, l) => s + l.py, 0) / cluster.items.length;
@@ -140,7 +140,7 @@ export class LakesMapEngineService {
   }
 
   flyToLake(lake: Lake): void {
-    const base = Math.min(this.canvas.width / LAKES_IMG_W, this.canvas.height / LAKES_IMG_H);
+    const base = this.minScale();
     const ns = Math.min(this.minScale() * MAX_ZOOM, Math.max(this.scale, base * 2.5));
     this.animateTo(this.canvas.width / 2 / ns - lake.px, this.canvas.height / 2 / ns - lake.py, ns, () => this.draw());
   }
@@ -154,7 +154,7 @@ export class LakesMapEngineService {
   }
 
   private minScale(): number {
-    return Math.min(this.canvas.width / LAKES_IMG_W, this.canvas.height / LAKES_IMG_H);
+    return Math.max(this.canvas.width / LAKES_IMG_W, this.canvas.height / LAKES_IMG_H);
   }
 
   private clampOx(v: number): number {

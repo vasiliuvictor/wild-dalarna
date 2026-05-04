@@ -1,0 +1,137 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.lakes-sidebar {
+  background: #1a2e1a;
+  height: 100%;
+  overflow-y: auto;
+  padding: 24px 0 0;
+  scrollbar-width: thin;
+  scrollbar-color: #2d4a2d transparent;
+}
+
+.lsb-header {
+  padding: 0 20px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, .08);
+}
+
+.lsb-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  color: #f0f4f1;
+  margin-bottom: 5px;
+}
+
+.lsb-count {
+  font-size: .75rem;
+  color: #b8d4c0;
+  opacity: .7;
+}
+
+.lsb-search-wrap {
+  padding: 14px 20px;
+}
+
+.lsb-search-input {
+  width: 100%;
+  background: rgba(255, 255, 255, .07);
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 8px;
+  padding: 9px 13px;
+  color: #f0f4f1;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .83rem;
+  outline: none;
+  transition: border-color .25s;
+
+  &::placeholder { color: rgba(255, 255, 255, .3); }
+  &:focus { border-color: #4a8a58; background: rgba(255, 255, 255, .09); }
+}
+
+.lsb-cat-group { margin: 2px 0; }
+
+.lsb-cat-toggle {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 11px 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #f0f4f1;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .83rem;
+  font-weight: 500;
+  text-align: left;
+  transition: background .2s;
+
+  &:hover { background: rgba(255, 255, 255, .06); }
+  &.open { background: rgba(255, 255, 255, .06); }
+}
+
+.lsb-cat-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: transform .2s;
+
+  .lsb-cat-toggle.open & { transform: scale(1.3); }
+}
+
+.lsb-cat-count {
+  margin-left: auto;
+  font-size: .7rem;
+  background: rgba(255, 255, 255, .12);
+  border-radius: 10px;
+  padding: 2px 7px;
+  color: #b8d4c0;
+  transition: background .2s;
+
+  .lsb-cat-toggle.open & { background: rgba(255, 255, 255, .22); }
+}
+
+.lsb-cat-chevron {
+  margin-left: 4px;
+  transition: transform .28s cubic-bezier(.4, 0, .2, 1);
+  opacity: .45;
+  font-size: .6rem;
+
+  .lsb-cat-toggle.open & { transform: rotate(180deg); opacity: .75; }
+}
+
+.lsb-lake-list {
+  max-height: 0;
+  overflow: hidden;
+  background: rgba(0, 0, 0, .15);
+  transition: max-height .32s cubic-bezier(.4, 0, .2, 1);
+
+  &.open { max-height: 600px; }
+}
+
+.lsb-lake-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 9px 20px 9px 38px;
+  cursor: pointer;
+  transition: background .18s;
+  border-bottom: 1px solid rgba(255, 255, 255, .025);
+
+  &:hover { background: rgba(255, 255, 255, .07); }
+}
+
+.lsb-lake-name {
+  font-size: .8rem;
+  color: #b8d4c0;
+  line-height: 1.3;
+}
+
+.lsb-lake-species {
+  font-size: .68rem;
+  color: rgba(255, 255, 255, .35);
+  line-height: 1.3;
+}

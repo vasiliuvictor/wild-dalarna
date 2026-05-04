@@ -1,0 +1,43 @@
+<aside class="lakes-sidebar">
+  <div class="lsb-header">
+    <div class="lsb-title">Lake Fishing Guide</div>
+    <div class="lsb-count">{{ sidebarCount }}</div>
+  </div>
+
+  <div class="lsb-search-wrap">
+    <input
+      class="lsb-search-input"
+      type="text"
+      placeholder="Search lakes…"
+      [value]="lakes.searchTerm()"
+      (input)="onSearch($any($event.target).value)"
+    />
+  </div>
+
+  <div class="lsb-cat-list">
+    @for (entry of filteredGrouped | keyvalue: categoryOrder; track entry.key) {
+      @if (lakes.categories[entry.key]; as cat) {
+        <div class="lsb-cat-group">
+          <button
+            class="lsb-cat-toggle"
+            [class.open]="isCatOpen(entry.key)"
+            (click)="toggleCat(entry.key)"
+          >
+            <span class="lsb-cat-dot" [style.background]="cat.color"></span>
+            {{ cat.emoji }} {{ cat.label }}
+            <span class="lsb-cat-count">{{ entry.value.length }}</span>
+            <span class="lsb-cat-chevron">▼</span>
+          </button>
+          <div class="lsb-lake-list" [class.open]="isCatOpen(entry.key)">
+            @for (lake of entry.value; track lake.id) {
+              <div class="lsb-lake-item" (click)="onLakeClick(lake)">
+                <span class="lsb-lake-name">{{ lake.name }}</span>
+                <span class="lsb-lake-species">{{ lake.species }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    }
+  </div>
+</aside>

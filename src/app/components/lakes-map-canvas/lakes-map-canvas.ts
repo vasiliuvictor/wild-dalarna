@@ -116,6 +116,11 @@ export class LakesMapCanvas implements AfterViewInit, OnDestroy {
   zoomOut(): void { this.engine.zoom(1 / 1.4); this.zoomLabel.set(this.engine.zoomLabel()); this.hideClusterPopup(); }
   resetView(): void { this.engine.fitView(); this.zoomLabel.set(this.engine.zoomLabel()); this.hideClusterPopup(); }
 
+  flyToLake(lakeId: string): void {
+    const lake = this.lakes.getLakeById(lakeId);
+    if (lake) this.engine.flyToLake(lake);
+  }
+
   onMouseDown(e: MouseEvent): void {
     if (e.button !== 0) return;
     this.panStart = { mx: e.clientX, my: e.clientY, ox: this.engine.ox, oy: this.engine.oy };

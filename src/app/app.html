@@ -1,3 +1,10 @@
+<button class="explore-fab" [class.visible]="showFab()" (click)="scrollToNav()" aria-label="Scroll to explore sections">
+  <svg class="explore-fab-arrow" viewBox="0 0 16 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <polyline points="3,10 8,4 13,10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="8" y1="4" x2="8" y2="18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  </svg>
+</button>
+
 <app-hero (scrollToApp)="scrollToApp()"></app-hero>
 
 <app-nav-categories></app-nav-categories>
@@ -19,4 +26,16 @@
 
 <app-news-lists></app-news-lists>
 
-<app-lakes-map-canvas></app-lakes-map-canvas>
+<div class="lakes-layout" id="lakes-section">
+  <div class="lakes-section-nav">
+    <div class="lakes-section-nav-title">
+      <span class="lakes-section-nav-dot"></span>
+      Lake Fishing Guide
+    </div>
+    <span class="lakes-section-nav-meta">Älvdalen · {{ lakes.totalLakes }} Waters</span>
+  </div>
+  <div class="lakes-content">
+    <app-lakes-sidebar (selectLake)="onSelectLake($event)"></app-lakes-sidebar>
+    <app-lakes-map-canvas></app-lakes-map-canvas>
+  </div>
+</div>

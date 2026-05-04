@@ -40,7 +40,7 @@ export class MapEngineService {
       this.imgLoaded = true;
       this.resize();
     };
-    this.mapImg.src = 'map.jpg';
+    this.mapImg.src = 'alvdalen_map.png';
   }
 
   resize(): void {
