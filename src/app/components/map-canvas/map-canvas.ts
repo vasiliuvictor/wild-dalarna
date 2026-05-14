@@ -23,6 +23,9 @@ export class MapCanvas implements AfterViewInit, OnDestroy {
 
   protected hintHidden = signal(false);
   protected zoomLabel = signal('1×');
+  protected showCalibrationButton = signal(false);
+  protected calibrationMode = signal(false);
+  protected calibrationCoords = signal('');
 
   protected tooltipVisible = signal(false);
   protected tooltipLeft = signal(0);
@@ -103,6 +106,7 @@ export class MapCanvas implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.calibrationMode()) this.engine.stopCalibration();
     this.resizeObserver?.disconnect();
     clearTimeout(this.hintTimer);
     document.removeEventListener('mousemove', this.docMouseMove);
@@ -112,6 +116,22 @@ export class MapCanvas implements AfterViewInit, OnDestroy {
   zoomIn(): void { this.engine.zoom(1.4); this.zoomLabel.set(this.engine.zoomLabel()); this.hidePopup(); }
   zoomOut(): void { this.engine.zoom(1 / 1.4); this.zoomLabel.set(this.engine.zoomLabel()); this.hidePopup(); }
   resetView(): void { this.engine.fitView(); this.zoomLabel.set(this.engine.zoomLabel()); this.hidePopup(); }
+
+  toggleCalibration(): void {
+    if (this.calibrationMode()) {
+      this.engine.stopCalibration();
+      this.calibrationMode.set(false);
+    } else {
+      this.calibrationMode.set(true);
+      this.calibrationCoords.set('Click on a place to capture coordinates');
+      this.engine.startCalibration((coords) => {
+        const text = `px: ${coords.px.toFixed(1)}, py: ${coords.py.toFixed(1)}`;
+        this.calibrationCoords.set(text);
+        navigator.clipboard.writeText(`px: ${coords.px}, py: ${coords.py}`);
+        console.log(`Captured: ${text}`);
+      });
+    }
+  }
 
   flyToPlace(placeId: string): void {
     const place = this.places.getPlaceById(placeId);
@@ -226,6 +246,8 @@ export class MapCanvas implements AfterViewInit, OnDestroy {
       this.popupLeft.set(left);
       this.popupTop.set(top);
     });
+    // const result = this.engine.findNearestGCP(cluster);
+    // console.log(result)
   }
 
   protected hidePopup(): void {

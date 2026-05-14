@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Cluster, Place } from '../models/place.model';
-import { CATEGORIES, PlacesService } from './places';
+import { CATEGORIES, GCP_POINTS, PlacesService } from './places';
 
 const CLUSTER_R = 30;
 const MAX_ZOOM = 3;
@@ -24,6 +24,8 @@ export class MapEngineService {
 
   private onPlaceClick?: (id: string) => void;
   private onClusterClick?: (cluster: Cluster, cx: number, cy: number) => void;
+  private calibrationMode = false;
+  private onCalibrationClick?: (coords: { px: number; py: number; cx: number; cy: number }) => void;
 
   constructor(private places: PlacesService) {}
 
@@ -106,6 +108,12 @@ export class MapEngineService {
   }
 
   handleClickAt(cx: number, cy: number): void {
+    if (this.calibrationMode) {
+      const { px, py } = this.cvsToImg(cx, cy);
+      this.onCalibrationClick?.({ px: Math.round(px * 10) / 10, py: Math.round(py * 10) / 10, cx, cy });
+      return;
+    }
+
     let best: Cluster | null = null, bestD = HIT_RADIUS;
     this.currentClusters.forEach(cl => {
       const d = Math.hypot(cl.cx - cx, cl.cy - cy);
@@ -141,10 +149,36 @@ export class MapEngineService {
   }
 
   flyToPlace(place: Place): void {
-    const { px, py } = this.places.geoToImg(place.lat, place.lon);
+    const { px, py } = this.places.getPlaceCoords(place);
     const base = Math.min(this.canvas.width / IMG_W, this.canvas.height / IMG_H);
     const ns = Math.max(this.scale, base * 4);
     this.animateTo(this.canvas.width / 2 / ns - px, this.canvas.height / 2 / ns - py, ns, () => this.draw());
+  }
+
+  findClusterByPlaceId(placeId: string): Cluster | null {
+    return this.currentClusters.find(cl => cl.items.some(p => p.id === placeId)) ?? null;
+  }
+
+  findNearestGCP(cluster: Cluster, count: number = 3): Array<{ lat: number; lon: number; px: number; py: number; distance: number }> {
+    const { px, py } = this.cvsToImg(cluster.cx, cluster.cy);
+    return GCP_POINTS.map(gcp => ({
+      ...gcp,
+      distance: Math.hypot(gcp.px - px, gcp.py - py)
+    })).sort((a, b) => a.distance - b.distance).slice(0, count);
+  }
+
+  startCalibration(onClick: (coords: { px: number; py: number; cx: number; cy: number }) => void): void {
+    this.calibrationMode = true;
+    this.onCalibrationClick = onClick;
+  }
+
+  stopCalibration(): void {
+    this.calibrationMode = false;
+    this.onCalibrationClick = undefined;
+  }
+
+  isCalibrating(): boolean {
+    return this.calibrationMode;
   }
 
   imgToCvs(px: number, py: number): { cx: number; cy: number } {
@@ -173,7 +207,7 @@ export class MapEngineService {
 
   private buildClusters(filtered: Place[]): Cluster[] {
     const pts = filtered.map(p => {
-      const { px, py } = this.places.geoToImg(p.lat, p.lon);
+      const { px, py } = this.places.getPlaceCoords(p);
       const { cx, cy } = this.imgToCvs(px, py);
       return { place: p, cx, cy, used: false };
     });

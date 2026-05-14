@@ -26,7 +26,15 @@
     <div class="zoom-label">{{ zoomLabel() }}</div>
     <button class="zoom-btn" (click)="zoomOut()" title="Zoom out">−</button>
     <button class="zoom-btn" (click)="resetView()" title="Fit map" style="font-size:.7rem">⌂</button>
+    @if (showCalibrationButton()) {
+      <button class="zoom-btn" [class.active]="calibrationMode()" (click)="toggleCalibration()" title="Calibration mode" style="font-size:.7rem">◈</button>
+    }
   </div>
+
+  <!-- Calibration info -->
+  @if (calibrationMode()) {
+    <div class="calibration-info">{{ calibrationCoords() }}</div>
+  }
 
   <!-- Legend -->
   <app-map-legend></app-map-legend>
@@ -38,8 +46,6 @@
   @if (popupVisible() && popupCluster()) {
     <div
       class="cluster-popup"
-      [style.left.px]="popupLeft()"
-      [style.top.px]="popupTop()"
     >
       <div class="cpop-title">{{ popupCluster()!.items.length }} places here</div>
       @for (place of popupCluster()!.items; track place.id) {

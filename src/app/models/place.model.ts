@@ -11,6 +11,8 @@ export interface Place {
   category: string;
   lat: number;
   lon: number;
+  px?: number;
+  py?: number;
   rating?: number;
   ratingCount?: number;
   address?: string;
